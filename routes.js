@@ -53,7 +53,6 @@ const routes = [
         reading,
       } = request.payload;
 
-      const response = h.response("success").code(201);
       const id = nanoid(16);
 
       const responseBody = {
@@ -61,7 +60,8 @@ const routes = [
         author: author,
       };
 
-      response.responseBody(responseBody);
+      const response = h.response(responseBody).code(201);
+
       return response;
     },
   },
