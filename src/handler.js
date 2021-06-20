@@ -196,7 +196,7 @@ const putUpdateBuku = (request, h) => {
       .code(404)
     return response
   } else {
-    // jika data valid
+    // jika data valid, maka update data
     bookDetail.name = name
     bookDetail.year = year
     bookDetail.author = author
@@ -216,9 +216,35 @@ const putUpdateBuku = (request, h) => {
   }
 }
 
+// Kriteria 4
+const deleteBook = (request, h) => {
+  const { bookId } = request.params
+  const indexResult = books.findIndex((book) => book.id === bookId)
+  console.log('indexResult ' + indexResult)
+
+  if (indexResult < 0) {
+    const response = h
+      .response({
+        status: 'fail',
+        message: 'Buku gagal dihapus. Id tidak ditemukan'
+      })
+      .code(404)
+    return response
+  } else {
+    // jika data valid, maka hapus data
+    books.splice(indexResult, 1)
+    return h
+      .response({
+        status: 'success',
+        message: 'Buku berhasil dihapus'
+      })
+      .code(200)
+  }
+}
 module.exports = {
   addBookHandler,
   getAllBookList,
   getBookDetail,
-  putUpdateBuku
+  putUpdateBuku,
+  deleteBook
 }

@@ -3,7 +3,8 @@ const {
   addBookHandler,
   getAllBookList,
   getBookDetail,
-  putUpdateBuku
+  putUpdateBuku,
+  deleteBook
 } = require('./handler')
 
 const routes = [
@@ -101,9 +102,9 @@ const routes = [
   {
     method: 'DELETE',
     path: '/books/{bookId}',
-    handler: (request, h) => {
-      // TODO -> Kriteria 5 : API dapat menghapus buku
-      /**
+    handler: deleteBook
+    // TODO -> Kriteria 5 : API dapat menghapus buku
+    /**
        * Server harus merespons gagal bila:
 
         1. Bila id yang dilampirkan tidak dimiliki oleh buku manapun, maka server harus mengembalikan respons berikut:
@@ -112,8 +113,6 @@ const routes = [
         2. Bila id dimiliki oleh salah satu buku, maka buku tersebut harus dihapus dan server mengembalikan respons berikut:
         Status Code : 200
        */
-      return 'About page'
-    }
   }
 ]
 
