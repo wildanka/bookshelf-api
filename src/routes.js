@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const { nanoid } = require('nanoid')
+const { addBookHandler, getAllBookList } = require('./handler')
 
 const routes = [
   {
@@ -7,6 +7,11 @@ const routes = [
     path: '/',
     handler: (request, h) => {
       return 'Hello World!'
+    },
+    options: {
+      cors: {
+        origin: ['*']
+      }
     }
   },
   {
@@ -26,9 +31,9 @@ const routes = [
   {
     method: 'POST',
     path: '/books',
-    handler: (request, h) => {
-      // TODO -> Kriteria 1 : API dapat menyimpan buku
-      /**
+    handler: addBookHandler
+    // TODO -> Kriteria 1 : API dapat menyimpan buku
+    /**
        * Server harus merespons gagal bila:
 
         1. Client tidak melampirkan properti namepada request body. Bila hal ini terjadi, maka server akan merespons dengan:
@@ -43,40 +48,16 @@ const routes = [
         4. Bila buku berhasil dimasukkan, server harus mengembalikan respons dengan:
         Status Code : 201
        */
-      const {
-        name,
-        year,
-        author,
-        summary,
-        publisher,
-        pageCount,
-        readPage,
-        reading
-      } = request.payload
-
-      const id = nanoid(16)
-
-      const responseBody = {
-        id: id,
-        author: author
-      }
-
-      const response = h.response(responseBody).code(201)
-
-      return response
-    }
   },
   {
     method: 'GET',
     path: '/books',
-    handler: (request, h) => {
-      // TODO -> Kriteria 2 : API dapat menampilkan seluruh buku
-      /**
+    handler: getAllBookList
+    // TODO -> Kriteria 2 : API dapat menampilkan seluruh buku
+    /**
         1. Server harus mengembalikan respons dengan:
         2. Jika belum terdapat buku yang dimasukkan, server bisa merespons dengan array books kosong.
       */
-      return 'About page'
-    }
   },
   {
     method: 'GET',
