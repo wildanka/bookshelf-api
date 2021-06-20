@@ -29,12 +29,29 @@ const addBookHandler = (request, h) => {
     reading
   } = request.payload
 
+  // validasi
+  console.log(name)
+  if (name === '' || name === undefined) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Gagal menambahkan buku. Mohon isi nama buku'
+      })
+      .code(400)
+  }
+
+  if (readPage > pageCount) {
+    return h
+      .response({
+        status: 'fail',
+        message:
+          'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount'
+      })
+      .code(400)
+  }
+
   const id = nanoid(16)
 
-  const responseBody = {
-    id: id,
-    author: author
-  }
   const insertedAt = new Date().toISOString()
   const updatedAt = insertedAt
   const finished = () => {
@@ -65,18 +82,31 @@ const addBookHandler = (request, h) => {
   const isSuccess = books.filter((book) => book.id === id).length > 0
 
   if (isSuccess) {
-    const response = h.response(responseBody).code(201)
+    const response = h
+      .response({
+        status: 'success',
+        message: 'Buku berhasil ditambahkan',
+        data: {
+          bookId: id
+        }
+      })
+      .code(201)
     return response
   }
 
   const response = h.response({
-    status: 'fail',
-    message: 'Catatan gagal ditambahkan'
+    status: 'error',
+    message: 'Buku gagal ditambahkan'
   })
   response.code(500)
   return response
 }
 
+// Kriteria 2 : API dapat menampilkan seluruh buku
+/**
+        1. Server harus mengembalikan respons 200 dengan bentuk sbb DONE
+        2. Jika belum terdapat buku yang dimasukkan, server bisa merespons dengan array books kosong. DONE
+      */
 const getAllBookList = (request, h) => {
   const bookList = books.map(({ id, name, publisher }) => ({
     id,
@@ -94,4 +124,30 @@ const getAllBookList = (request, h) => {
     .code(200)
   return response
 }
-module.exports = { addBookHandler, getAllBookList }
+
+// Kriteria 3
+const getBookDetail = (request, h) => {
+  const { bookId } = request.params
+  const bookDetail = books.filter((book) => book.id === bookId)
+
+  if (bookDetail.length > 0) {
+    const response = h
+      .response({
+        status: 'success',
+        data: {
+          book: bookDetail
+        }
+      })
+      .code(200)
+    return response
+  }
+
+  const response = h
+    .response({
+      status: 'fail',
+      message: 'Buku tidak ditemukan'
+    })
+    .code(404)
+  return response
+}
+module.exports = { addBookHandler, getAllBookList, getBookDetail }

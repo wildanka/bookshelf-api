@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const { addBookHandler, getAllBookList } = require('./handler')
+const { addBookHandler, getAllBookList, getBookDetail } = require('./handler')
 
 const routes = [
   {
@@ -55,24 +55,22 @@ const routes = [
     handler: getAllBookList
     // TODO -> Kriteria 2 : API dapat menampilkan seluruh buku
     /**
-        1. Server harus mengembalikan respons dengan:
-        2. Jika belum terdapat buku yang dimasukkan, server bisa merespons dengan array books kosong.
+        1. Server harus mengembalikan respons dengan: DONE
+        2. Jika belum terdapat buku yang dimasukkan, server bisa merespons dengan array books kosong. DONE
       */
   },
   {
     method: 'GET',
     path: '/books/{bookId}',
-    handler: (request, h) => {
-      // TODO -> Kriteria 3 : API dapat menampilkan detail buku
-      /**
-        1. Bila buku dengan id yang dilampirkan oleh client tidak ditemukan, maka server harus mengembalikan respons dengan:
+    handler: getBookDetail
+    // TODO -> Kriteria 3 : API dapat menampilkan detail buku
+    /**
+        1. Bila buku dengan id yang dilampirkan oleh client tidak ditemukan, maka server harus mengembalikan respons dengan: DONE
         Status Code : 404
 
-        2. Bila buku dengan id yang dilampirkan ditemukan, maka server harus mengembalikan respons dengan:
+        2. Bila buku dengan id yang dilampirkan ditemukan, maka server harus mengembalikan respons dengan: DONE
         Status Code : 200
       */
-      return 'About page'
-    }
   },
   {
     method: 'PUT',
