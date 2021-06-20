@@ -1,6 +1,12 @@
 const { nanoid } = require('nanoid')
 const books = require('./books')
 
+function isFinished(pageCount, readPage) {
+  if (pageCount === readPage) {
+    return true
+  }
+  return false
+}
 // TODO -> Kriteria 1 : API dapat menyimpan buku
 /**
      * Server harus merespons gagal bila:
@@ -54,13 +60,7 @@ const addBookHandler = (request, h) => {
 
   const insertedAt = new Date().toISOString()
   const updatedAt = insertedAt
-  const finished = () => {
-    if (pageCount === readPage) {
-      return true
-    } else {
-      return false
-    }
-  }
+  const finished = isFinished(pageCount, readPage)
 
   const bookToBeSaved = {
     id: id,
@@ -128,9 +128,10 @@ const getAllBookList = (request, h) => {
 // Kriteria 3
 const getBookDetail = (request, h) => {
   const { bookId } = request.params
-  const bookDetail = books.filter((book) => book.id === bookId)
 
-  if (bookDetail.length > 0) {
+  const bookDetail = books.find((book) => book.id === bookId)
+  console.log(bookDetail)
+  if (bookDetail !== undefined) {
     const response = h
       .response({
         status: 'success',
@@ -150,4 +151,74 @@ const getBookDetail = (request, h) => {
     .code(404)
   return response
 }
-module.exports = { addBookHandler, getAllBookList, getBookDetail }
+
+// Kriteria 4
+const putUpdateBuku = (request, h) => {
+  const { bookId } = request.params
+
+  const {
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading
+  } = request.payload
+
+  if (name === '' || name === undefined) {
+    return h
+      .response({
+        status: 'fail',
+        message: 'Gagal memperbarui buku. Mohon isi nama buku'
+      })
+      .code(400)
+  }
+
+  if (readPage > pageCount) {
+    return h
+      .response({
+        status: 'fail',
+        message:
+          'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount'
+      })
+      .code(400)
+  }
+  // search for id
+  const bookDetail = books.find((book) => book.id === bookId)
+  if (bookDetail === undefined) {
+    const response = h
+      .response({
+        status: 'fail',
+        message: 'Gagal memperbarui buku. Id tidak ditemukan'
+      })
+      .code(404)
+    return response
+  } else {
+    // jika data valid
+    bookDetail.name = name
+    bookDetail.year = year
+    bookDetail.author = author
+    bookDetail.summary = summary
+    bookDetail.publisher = publisher
+    bookDetail.pageCount = pageCount
+    bookDetail.readPage = readPage
+    bookDetail.reading = reading
+    bookDetail.finished = isFinished(pageCount, readPage)
+
+    return h
+      .response({
+        status: 'success',
+        message: 'Buku berhasil diperbarui'
+      })
+      .code(200)
+  }
+}
+
+module.exports = {
+  addBookHandler,
+  getAllBookList,
+  getBookDetail,
+  putUpdateBuku
+}

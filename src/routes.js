@@ -1,5 +1,10 @@
 /* eslint-disable no-unused-vars */
-const { addBookHandler, getAllBookList, getBookDetail } = require('./handler')
+const {
+  addBookHandler,
+  getAllBookList,
+  getBookDetail,
+  putUpdateBuku
+} = require('./handler')
 
 const routes = [
   {
@@ -32,7 +37,7 @@ const routes = [
     method: 'POST',
     path: '/books',
     handler: addBookHandler
-    // TODO -> Kriteria 1 : API dapat menyimpan buku
+    // Kriteria 1 : API dapat menyimpan buku
     /**
        * Server harus merespons gagal bila:
 
@@ -53,7 +58,7 @@ const routes = [
     method: 'GET',
     path: '/books',
     handler: getAllBookList
-    // TODO -> Kriteria 2 : API dapat menampilkan seluruh buku
+    // Kriteria 2 : API dapat menampilkan seluruh buku
     /**
         1. Server harus mengembalikan respons dengan: DONE
         2. Jika belum terdapat buku yang dimasukkan, server bisa merespons dengan array books kosong. DONE
@@ -63,7 +68,7 @@ const routes = [
     method: 'GET',
     path: '/books/{bookId}',
     handler: getBookDetail
-    // TODO -> Kriteria 3 : API dapat menampilkan detail buku
+    // Kriteria 3 : API dapat menampilkan detail buku
     /**
         1. Bila buku dengan id yang dilampirkan oleh client tidak ditemukan, maka server harus mengembalikan respons dengan: DONE
         Status Code : 404
@@ -75,9 +80,9 @@ const routes = [
   {
     method: 'PUT',
     path: '/books/{bookId}',
-    handler: (request, h) => {
-      // TODO -> Kriteria 4 : API dapat mengubah data buku
-      /**
+    handler: putUpdateBuku
+    // TODO -> Kriteria 4 : API dapat mengubah data buku
+    /**
        * Server harus merespons gagal bila:
 
         1. Client tidak melampirkan properti name pada request body. Bila hal ini terjadi, maka server akan merespons dengan:
@@ -92,8 +97,6 @@ const routes = [
         4.Bila buku berhasil diperbarui, server harus mengembalikan respons dengan:
         Status Code : 200
        */
-      return 'About page'
-    }
   },
   {
     method: 'DELETE',
