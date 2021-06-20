@@ -135,7 +135,7 @@ const getBookDetail = (request, h) => {
 }
 
 // Kriteria 4
-const putUpdateBuku = (request, h) => {
+const putUpdateBook = (request, h) => {
   const { bookId } = request.params
 
   const {
@@ -227,6 +227,6 @@ module.exports = {
   addBookHandler,
   getAllBookList,
   getBookDetail,
-  putUpdateBuku,
+  putUpdateBook,
   deleteBook
 }
