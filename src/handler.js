@@ -22,7 +22,6 @@ const addBookHandler = (request, h) => {
   } = request.payload
 
   // validasi
-  console.log(name)
   if (name === '' || name === undefined) {
     return h
       .response({
@@ -90,17 +89,77 @@ const addBookHandler = (request, h) => {
 
 // Kriteria 2
 const getAllBookList = (request, h) => {
-  const bookList = books.map(({ id, name, publisher }) => ({
+  const { name, reading, finished } = request.query
+
+  const filterName = (book) => {
+    const nameRegex = new RegExp(name, 'gi')
+    return nameRegex.test(book.name)
+  }
+
+  const filterBookReading = (book) => {
+    return book.reading === true
+  }
+  const filterBookReadingFalse = (book) => {
+    return book.reading === false
+  }
+  const filterFinished = (book) => {
+    return book.finished === true
+  }
+  const filterFinishedFalse = (book) => {
+    return book.finished === false
+  }
+
+  const mapData = ({ id, name, publisher }) => ({
     id,
     name,
     publisher
-  }))
+  })
+
+  let finalResponse
+  console.log(`name: ${name}, reading: ${reading}, finished: ${finished}`)
+  if (name) {
+    console.log('name ' + name)
+    finalResponse = books.filter(filterName)
+    console.log('kena 1 : ')
+    console.log('hasil 1 : ' + finalResponse)
+  }
+
+  if (reading) {
+    // eslint-disable-next-line eqeqeq
+    if (reading == 0) {
+      // filter where reading is false
+      finalResponse = books.filter(filterBookReadingFalse).map(mapData)
+      // eslint-disable-next-line eqeqeq
+    } else if (reading == 1) {
+      finalResponse = books.filter(filterBookReading).map(mapData)
+    }
+  }
+
+  if (finished) {
+    // eslint-disable-next-line eqeqeq
+    if (finished == 0) {
+      // filter where finished is false
+      finalResponse = books.filter(filterFinishedFalse).map(mapData)
+      // eslint-disable-next-line eqeqeq
+    } else if (finished == 1) {
+      finalResponse = books.filter(filterFinished).map(mapData)
+    }
+  }
+
+  if (finalResponse === undefined) {
+    // kalau bookList undefined, maka buat mapping untuk semuanya
+    finalResponse = books.map(({ id, name, publisher }) => ({
+      id,
+      name,
+      publisher
+    }))
+  }
 
   const response = h
     .response({
       status: 'success',
       data: {
-        books: bookList
+        books: finalResponse
       }
     })
     .code(200)
@@ -112,7 +171,6 @@ const getBookDetail = (request, h) => {
   const { bookId } = request.params
 
   const bookDetail = books.find((book) => book.id === bookId)
-  console.log(bookDetail)
   if (bookDetail !== undefined) {
     const response = h
       .response({
@@ -202,7 +260,6 @@ const putUpdateBook = (request, h) => {
 const deleteBook = (request, h) => {
   const { bookId } = request.params
   const indexResult = books.findIndex((book) => book.id === bookId)
-  console.log('indexResult ' + indexResult)
 
   if (indexResult < 0) {
     const response = h
