@@ -87,15 +87,23 @@ const addBookHandler = (request, h) => {
   return response
 }
 
+function constructResponse(h, finalResponse) {
+  return h
+    .response({
+      status: 'success',
+      data: {
+        books: finalResponse
+      }
+    })
+    .code(200)
+}
 // Kriteria 2
 const getAllBookList = (request, h) => {
   const { name, reading, finished } = request.query
 
   const filterName = (book) => {
-    const nameRegex = new RegExp(name, 'gi')
-    return nameRegex.test(book.name)
+    return book.name.toLowerCase().includes(name.toLowerCase)
   }
-
   const filterBookReading = (book) => {
     return book.reading === true
   }
@@ -116,12 +124,21 @@ const getAllBookList = (request, h) => {
   })
 
   let finalResponse
-  console.log(`name: ${name}, reading: ${reading}, finished: ${finished}`)
   if (name) {
-    console.log('name ' + name)
-    finalResponse = books.filter(filterName)
-    console.log('kena 1 : ')
-    console.log('hasil 1 : ' + finalResponse)
+    finalResponse = books.filter((book) => {
+      return book.name.toLowerCase().includes(name.toLowerCase())
+    })
+
+    finalResponse = finalResponse.map(mapData)
+    return h
+      .response({
+        status: 'success',
+        data: {
+          books: finalResponse
+        }
+      })
+      .code(200)
+    /// return constructResponse(h, finalResponse)
   }
 
   if (reading) {
@@ -133,6 +150,7 @@ const getAllBookList = (request, h) => {
     } else if (reading == 1) {
       finalResponse = books.filter(filterBookReading).map(mapData)
     }
+    return constructResponse(h, finalResponse)
   }
 
   if (finished) {
@@ -144,9 +162,11 @@ const getAllBookList = (request, h) => {
     } else if (finished == 1) {
       finalResponse = books.filter(filterFinished).map(mapData)
     }
+    return constructResponse(h, finalResponse)
   }
 
-  if (finalResponse === undefined) {
+  // eslint-disable-next-line eqeqeq
+  if (name == undefined && reading == undefined && finished == undefined) {
     // kalau bookList undefined, maka buat mapping untuk semuanya
     finalResponse = books.map(({ id, name, publisher }) => ({
       id,
